@@ -1,14 +1,15 @@
 <template>
     <div class="language-switcher">
-        <select v-model="currentLang" @change="changeLanguage">
-            <option
+        <el-select v-model="currentLang" @change="changeLanguage">
+            <el-option
                 v-for="lang in availableLanguages"
                 :key="lang.code"
                 :value="lang.code"
+                :label="lang.name"
             >
                 {{ lang.name }}
-            </option>
-        </select>
+            </el-option>
+        </el-select>
     </div>
 </template>
 
@@ -18,7 +19,7 @@ export default {
     data() {
         return {
             availableLanguages: [
-                { code: "en-US", name: "English" },
+                { code: "en-US", name: this.$t("language.English") },
                 { code: "zh-CN", name: "简体中文" },
                 { code: "ja-JP", name: "日本語" },
             ],
