@@ -137,7 +137,6 @@
     </el-popover>
 </template>
 <script>
-import { disable } from "ol/rotationconstraint";
 import {
     CompactPicker,
     SwatchesPicker,
@@ -170,7 +169,7 @@ export default {
     watch: {
         myColor: {
             handler(newVal, oldVal) {
-                this.color = newVal || "#000000";
+                this.checkColor(newVal)
             },
         },
         color: {
@@ -181,7 +180,7 @@ export default {
         },
     },
     mounted() {
-        this.color = this.myColor || "#000000";
+        this.checkColor(newVal)
     },
     components: {
         CompactPicker,
