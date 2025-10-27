@@ -4,18 +4,70 @@
     height: 25px !important;
     margin-right: 8px !important;
 }
-.vc-swatches-picker{
-    .box{
-        padding: 5px !important;
+.vc-swatches-picker {
+    padding: 5px 2px 5px 7px !important;
+    box-sizing: border-box;
+    overflow-y: hidden;
+    border: 1px solid #D4D4D4;
+    box-shadow: none !important;
+    .box {
+        height: 100%;
+        padding: 0 2px 0 0 !important;
+        box-sizing: border-box;
         overflow: auto !important;
     }
-    .colorGroup{
+    .colorGroup {
         width: 100% !important;
         display: flex;
         flex-direction: row;
         margin-right: 0 !important;
+        padding-bottom: 6px !important;
+        .color {
+            margin-bottom: 0 !important;
+        }
+        .color + .color {
+            margin-left: 4px;
+        }
     }
 }
-.vc-chrome-picker{
-    
+.vc-chrome-picker {
+    box-shadow: none !important;
+    .controls {
+        .color-wrap {
+            display: none;
+        }
+    }
+    .saturation {
+        padding-bottom: 76% !important;
+    }
+    .body {
+        padding: 8px 0 !important;
+    }
+}
+
+.vc-rgb-sliders,
+.vc-hsv-sliders,
+.vc-hsl-sliders {
+    background-color: transparent !important;
+    padding: 0px !important;
+    .picker{
+        width: 12px !important;
+        height: 12px !important;
+        transform: translate(-6px) translateY(-3px) !important;
+    }
+    .slider-wrap {
+        height: 26px !important;
+        margin-bottom: 6px !important;
+        align-items: center;
+        .label {
+            font-family: Microsoft YaHei;
+            font-weight: 400;
+            font-size: 14px !important;
+            color: #333333;
+        }
+        .vc-base-slider {
+            height: 12px !important;
+            margin: 0 !important;
+        }
+    }
 }

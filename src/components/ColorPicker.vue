@@ -1,107 +1,143 @@
 <template>
     <el-popover
         placement="bottom"
-        width="315"
+        width="338"
         trigger="click"
-        style="padding: 0"
+        :disabled="disabled"
+        style="
+            padding: 0;
+            height: 368px;
+            background: #ffffff;
+            border-radius: 2px;
+        "
         v-model="colorPickerVisible"
     >
-        <div class="box">
-            <div class="color-picker">
-                <ul class="color-picker-header">
-                    <li
-                        v-for="item in colorPickerTags"
-                        :key="item.id"
-                        :class="{
-                            'header-tag': true,
-                            'header-tag-active':
-                                currentTag == item.id ? true : false,
+        <div class="color-picker">
+            <el-tabs
+                v-model="currentTag"
+                type="card"
+                class="color-picker-header"
+            >
+                <el-tab-pane
+                    :label="item.label"
+                    :name="item.id"
+                    v-for="item in colorPickerTags"
+                    :key="item.id"
+                    class="tab-pane-item"
+                ></el-tab-pane>
+            </el-tabs>
+            <div class="color-picker-container">
+                <el-select
+                    v-model="value"
+                    placeholder="请选择配色方案"
+                    v-show="currentTag == 'default'"
+                    style="margin-bottom: 6px"
+                >
+                    <el-option
+                        v-for="item in options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    >
+                    </el-option>
+                </el-select>
+                <swatches-picker
+                    v-model="color"
+                    :palette="predefine"
+                    style="width: 100%; height: calc(100% - 30px)"
+                    v-show="currentTag == 'default'"
+                >
+                </swatches-picker>
+                <chrome-picker
+                    v-model="color"
+                    :disableFields="true"
+                    style="width: 100%"
+                    v-show="currentTag == 'palette'"
+                ></chrome-picker>
+                <RGBSliders
+                    v-model="color"
+                    style="
+                        width: 100%;
+                        background-color: #cec0c0;
+                        padding: 5px;
+                        box-sizing: border-box;
+                    "
+                    v-show="currentTag == 'RGB'"
+                >
+                </RGBSliders>
+                <HSVSliders
+                    v-model="color"
+                    style="
+                        width: 100%;
+                        background-color: #cec0c0;
+                        padding: 5px;
+                        box-sizing: border-box;
+                    "
+                    v-show="currentTag == 'HSV'"
+                >
+                </HSVSliders>
+                <HSLSliders
+                    v-model="color"
+                    style="
+                        width: 100%;
+                        background-color: #cec0c0;
+                        padding: 5px;
+                        box-sizing: border-box;
+                    "
+                    v-show="currentTag == 'HSL'"
+                >
+                </HSLSliders>
+            </div>
+            <div class="color-picker-footer">
+                <div class="color-wrap1">
+                    <div
+                        class="active-color"
+                        :style="{ 'background-color': color }"
+                    ></div>
+                    <div
+                        class="vc-checkerboard"
+                        :style="{
+                            'background-image': backgroundImage,
                         }"
-                        @click="currentTag = item.id"
-                    >
-                        {{ item.label }}
-                    </li>
-                </ul>
-                <div class="color-picker-container">
-                    <!-- <compact-picker
-                        v-model="color"
-                        :palette="predefine"
-                        style="width: 100%"
-                        v-show="currentTag == 'default'"
-                    ></compact-picker> -->
-                    <swatches-picker
-                        v-model="color"
-                        :palette="predefine"
-                        style="width: 100%; height: 100%"
-                        v-show="currentTag == 'default'"
-                    >
-                    </swatches-picker>
-                    <chrome-picker
-                        v-model="color"
-                        :disableFields="true"
-                        style="width: 100%"
-                        v-show="currentTag == 'palette'"
-                    ></chrome-picker>
-                    <RGBSliders
-                        v-model="color"
-                        style="
-                            width: 100%;
-                            background-color: #cec0c0;
-                            padding: 5px;
-                            box-sizing: border-box;
-                        "
-                        v-show="currentTag == 'RGB'"
-                    >
-                    </RGBSliders>
-                    <HSVSliders
-                        v-model="color"
-                        style="
-                            width: 100%;
-                            background-color: #cec0c0;
-                            padding: 5px;
-                            box-sizing: border-box;
-                        "
-                        v-show="currentTag == 'HSV'"
-                    >
-                    </HSVSliders>
-                    <HSLSliders
-                        v-model="color"
-                        style="
-                            width: 100%;
-                            background-color: #cec0c0;
-                            padding: 5px;
-                            box-sizing: border-box;
-                        "
-                        v-show="currentTag == 'HSL'"
-                    >
-                    </HSLSliders>
+                    ></div>
                 </div>
-                <div class="color-picker-footer">
-                    <el-input
-                        v-model="rgbaColor"
-                        style="width: 155px; margin-right: 44px"
-                        @change="checkColor"
-                    ></el-input>
-                    <el-button type="text" size="small" @click="clear"
-                        >清空</el-button
-                    >
-                    <el-button
-                        type="plain"
-                        size="small"
-                        style="padding: 6px 15px"
-                        @click="colorChange(color)"
-                        >确定</el-button
-                    >
-                </div>
+                <el-input
+                    v-model="rgbaColor"
+                    style="width: 160px; margin-right: 56px; line-height: 1"
+                    @change="checkColor"
+                ></el-input>
+                <el-button type="text" size="small" @click="clear"
+                    >清空</el-button
+                >
+                <el-button
+                    type="primary"
+                    size="mini"
+                    style="padding: 6px 10px"
+                    @click="colorChange(color)"
+                    >确定</el-button
+                >
             </div>
         </div>
-        <div class="picker-box" slot="reference">
-            <div class="color" :style="{ background: color }"></div>
-            <div class="el-icon-arrow-down"></div>
+        <div
+            class="picker-box"
+            slot="reference"
+            :class="{
+                'picker-box-medium': size == 'medium' ? true : false,
+                'picker-box-small': size == 'small' ? true : false,
+                'picker-box-mini': size == 'mini' ? true : false,
+                'is-disabled': disabled,
+            }"
+        >
+            <div class="color-picker__mask" v-if="disabled"></div>
+            <div class="color-picker__trigger">
+                <div class="color" :style="{ background: color }"></div>
+                <div class="el-icon-arrow-down color-picker-icon"></div>
+            </div>
         </div>
     </el-popover>
 </template>
 <script>
+import { disable } from "ol/rotationconstraint";
 import {
     CompactPicker,
     SwatchesPicker,
@@ -109,6 +145,7 @@ import {
     RGBSliders,
     HSVSliders,
     HSLSliders,
+    TwitterPicker,
 } from "vue-color/vue2";
 export default {
     model: {
@@ -118,6 +155,17 @@ export default {
     props: {
         myColor: [String, Number],
         predefine: Array,
+        size: {
+            type: String,
+        },
+        disabled: { type: Boolean, default: false },
+        ColorFormat: String,
+    },
+    computed: {
+        backgroundImage() {
+            const url = this.generateCheckerboard("#ffffff", "#e6e6e6", 8);
+            return `url(${url})`;
+        },
     },
     watch: {
         myColor: {
@@ -142,6 +190,7 @@ export default {
         RGBSliders,
         HSVSliders,
         HSLSliders,
+        TwitterPicker,
     },
     data() {
         return {
@@ -149,9 +198,16 @@ export default {
             color: "#000000",
             rgbaColor: "",
             currentTag: "default",
+            value: "01",
+            options: [
+                {
+                    label: "世界地图配色",
+                    value: "01",
+                },
+            ],
             colorPickerTags: [
                 {
-                    label: "默认",
+                    label: "推荐",
                     id: "default",
                 },
                 {
@@ -174,6 +230,31 @@ export default {
         };
     },
     methods: {
+        generateCheckerboard(color1, color2, size) {
+            // 避免在非浏览器环境执行
+            if (typeof document === "undefined") return "";
+
+            // 创建Canvas：尺寸为 2*size（2x2的棋盘格单元）
+            const canvas = document.createElement("canvas");
+            canvas.width = canvas.height = size * 2;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) return "";
+
+            // 绘制背景（第一种颜色）
+            ctx.fillStyle = color1;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 绘制左上角方块（第二种颜色）
+            ctx.fillStyle = color2;
+            ctx.fillRect(0, 0, size, size);
+
+            // 平移坐标后绘制右下角方块（第二种颜色）
+            ctx.translate(size, size);
+            ctx.fillRect(0, 0, size, size);
+
+            // 转换为图片URL
+            return canvas.toDataURL();
+        },
         /**
          * @description: 十六进制转RGBA
          * @param {*} hex
@@ -201,7 +282,9 @@ export default {
             const g = parseInt(hex.substring(2, 4), 16);
             const b = parseInt(hex.substring(4, 6), 16);
 
-            return `rgba(${r},${g},${b},${alpha.toFixed(2)})`;
+            return `rgba(${r},${g},${b},${
+                alpha == 1 ? alpha : alpha.toFixed(2)
+            })`;
         },
 
         /**
@@ -262,7 +345,7 @@ export default {
             g = Math.round((g + m) * 255);
             b = Math.round((b + m) * 255);
 
-            return this.rgbaToHex(r, g, b, a);
+            return this.rgbToHex(r, g, b, a);
         },
 
         /**
@@ -302,7 +385,7 @@ export default {
             r = Math.round((r + m) * 255);
             g = Math.round((g + m) * 255);
             b = Math.round((b + m) * 255);
-            return this.rgbaToHex(r, g, b, a);
+            return this.rgbToHex(r, g, b, a);
         },
 
         /**
@@ -341,7 +424,6 @@ export default {
                     b <= 255
                 ) {
                     this.color = this.rgbToHex(r, g, b);
-                    console.log(this.color)
                     return;
                 }
             }
@@ -446,78 +528,190 @@ export default {
         },
 
         /**
-         * @description: 颜色改变
+         * @description: 颜色改变 hex
          * @param {*} color
          * @return {*}
          */
         colorChange(color) {
             this.color = color;
-            this.$emit("change", color);
+            let formatColor = "";
+            switch (this.ColorFormat) {
+                case "hex":
+                default:
+                    formatColor = color;
+                case "rgb":
+                    formatColor = this.hexToRgba(color);
+            }
+            this.$emit("change", formatColor);
             this.colorPickerVisible = false;
         },
     },
 };
 </script>
 <style lang="less" scoped>
-.picker-box {
-    width: 35px;
-    height: 20px;
-    font-size: 12px;
+:deep(.el-tabs__header) {
+    margin: 0;
+}
+:deep(.el-tabs__item) {
     line-height: 1;
-    margin-left: 9px;
-    padding: 2px;
-    background: #fff;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding: 3px 10px !important;
+    box-sizing: border-box;
+    text-align: center;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    font-size: 12px;
+    color: #333333;
+    height: 21px;
+    transition: none;
+}
+:deep(.el-tabs__item.is-active) {
+    background: #3370ff;
+    border-radius: 2px;
+    border: 1px solid #d4d4d4;
+    color: #ffffff;
+}
+.picker-box {
+    display: inline-block;
+    position: relative;
+    line-height: normal;
+    width: 18px;
+    height: 18px;
+    .color-picker__mask {
+        width: 26px;
+        height: 26px;
+        border-radius: 4px;
+        position: absolute;
+        top: 1px;
+        left: 1px;
+        z-index: 1;
+        cursor: not-allowed;
+        background-color: rgba(255, 255, 255, 0.7);
+    }
+    .color-picker__trigger {
+        display: inline-block;
+        box-sizing: border-box;
+        height: 18px;
+        width: 18px;
+        padding: 0;
+        border: 1px solid #e6e6e6;
+        border-radius: 4px;
+        font-size: 0;
+        position: relative;
+        cursor: pointer;
+    }
 
     .color {
-        width: 13px;
-        height: 13px;
-        box-shadow: inset 0 0 0 0.013333rem rgba(0, 0, 0, 0.15);
+        position: relative;
+        display: block;
+        box-sizing: border-box;
+        border: 1px solid #999;
+        border-radius: 2px;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+    }
+    .color-picker-icon {
+        font-size: 12px;
+        display: inline-block;
+        width: 100%;
+        color: #fff;
+        text-align: center;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate3d(-50%, -50%, 0);
     }
 }
+.picker-box.is-disabled .color-picker__trigger {
+    cursor: not-allowed;
+}
+// .picker-box-medium {
+//     height: 36px;
+//     .color-picker__trigger {
+//         height: 36px;
+//         width: 36px;
+//     }
+// }
+// .picker-box-small {
+//     height: 32px;
+//     .color-picker__trigger {
+//         height: 32px;
+//         width: 32px;
+//     }
+//     .color-picker-icon {
+//         transform: translate3d(-50%, -50%, 0) scale(0.8);
+//     }
+// }
+// .picker-box-mini {
+//     height: 28px;
+//     .color-picker__trigger {
+//         height: 28px;
+//         width: 28px;
+//     }
+//     .color-picker-icon {
+//         transform: translate3d(-50%, -50%, 0) scale(0.8);
+//     }
+// }
+.color-circle {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+}
+.color-wrap1 {
+    position: relative;
+    width: 36px;
+    margin-right: 5px;
+}
+.active-color {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    overflow: hidden;
+    z-index: 1;
+}
+.color-wrap1 .vc-checkerboard {
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    background-size: auto;
+}
+.vc-checkerboard {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-size: contain;
+}
 .color-picker {
-    width: 314px;
-    height: 330px;
+    width: 100%;
+    height: 368px;
     box-sizing: border-box;
-    background-color: #f0f3fc;
-    border: 1px solid #ebeef5;
     border-radius: 4px;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     .color-picker-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        height: 18px;
-        padding: 0 10px;
+        height: 37px;
+        padding: 8px;
+        box-sizing: border-box;
     }
     .color-picker-container {
         width: 100%;
-        height: 240px;
-        padding: 10px;
+        height: 290px;
+        padding: 0 8px 8px;
         box-sizing: border-box;
     }
     .color-picker-footer {
+        display: flex;
+        align-items: center;
         width: 100%;
-        padding: 0 10px;
+        height: 41px;
+        padding: 8px;
+        border-top: 1px solid #d4d4d4;
         box-sizing: border-box;
-    }
-    .header-tag {
-        border: 1px solid #6d7079;
-        background-color: #f1f4fd;
-        color: #000;
-        font-size: 12px;
-        padding: 2px;
-        box-sizing: border-box;
-        cursor: pointer;
-        list-style: none;
-        &:hover {
-            color: #719a8b;
-        }
-    }
-    .header-tag-active {
-        color: #719a8b;
     }
 }
 </style>
