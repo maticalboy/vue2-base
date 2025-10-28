@@ -6,11 +6,12 @@
         :disabled="disabled"
         style="
             padding: 0;
-            height: 368px;
             background: #ffffff;
             border-radius: 2px;
         "
+        :popper-class="PopperClass"
         v-model="colorPickerVisible"
+        @hide="hide"
     >
         <div class="color-picker">
             <el-tabs
@@ -28,7 +29,7 @@
             </el-tabs>
             <div class="color-picker-container">
                 <el-select
-                    v-model="value"
+                    v-model="value1"
                     placeholder="请选择配色方案"
                     v-show="currentTag == 'default'"
                     style="margin-bottom: 6px"
@@ -148,29 +149,96 @@ import {
 } from "vue-color/vue2";
 export default {
     model: {
-        prop: "myColor",
+        prop: "value",
         event: "change",
     },
     props: {
-        myColor: [String, Number],
-        predefine:{
-            type:Array,
-            default:[
-                ['#AFC5A1', '#B2D2C0', '#B0DCD5', '#CDE081', '#CCE2A3', '#A5D8B7', '#285E1E'],
-                ['#C2BBDC', '#D2CCE6', '#DAB4D4', '#ECCEE2', '#F9E8F1', '#E6C6E0', '#453B7F'],
-                ['#F4BAAE', '#EBCFB0', '#FBD9BD', '#DECEBD', '#EAC2A6', '#E8B699', '#8D373C'],
-                ['#FDE0A5', '#F9EAD2', '#FFF7C5', '#ECEAAC', '#FCF8BB', '#FBE8A6', '#926A34'],
-                ['#A1CBED', '#B0DCDA', '#BDD7CA', '#BBC1D0', '#C7E8FA', '#A9D5E0', '#335489'],
-                ['#BF7C85', '#ECA37A', '#E3CECD', '#F4B3C2', '#F6DDDB', '#E9A59A', '#A72126'],
-                ['#F3F2F7', '#F1F9FE', '#FFF1D5', '#F6F1DA', '#FFF5D7', '#EAE5DA', '#EDDBB1'],
-                ['#000000', '#2A2A2A', '#555555', '#808080', '#AAAAAA', '#D5D5D5', '#FFFFFF'],
-            ],
+        value: [String, Number],
+        predefine: {
+            type: Array,
+            default: function () {
+                return [
+                    [
+                        "#AFC5A1",
+                        "#B2D2C0",
+                        "#B0DCD5",
+                        "#CDE081",
+                        "#CCE2A3",
+                        "#A5D8B7",
+                        "#285E1E",
+                    ],
+                    [
+                        "#C2BBDC",
+                        "#D2CCE6",
+                        "#DAB4D4",
+                        "#ECCEE2",
+                        "#F9E8F1",
+                        "#E6C6E0",
+                        "#453B7F",
+                    ],
+                    [
+                        "#F4BAAE",
+                        "#EBCFB0",
+                        "#FBD9BD",
+                        "#DECEBD",
+                        "#EAC2A6",
+                        "#E8B699",
+                        "#8D373C",
+                    ],
+                    [
+                        "#FDE0A5",
+                        "#F9EAD2",
+                        "#FFF7C5",
+                        "#ECEAAC",
+                        "#FCF8BB",
+                        "#FBE8A6",
+                        "#926A34",
+                    ],
+                    [
+                        "#A1CBED",
+                        "#B0DCDA",
+                        "#BDD7CA",
+                        "#BBC1D0",
+                        "#C7E8FA",
+                        "#A9D5E0",
+                        "#335489",
+                    ],
+                    [
+                        "#BF7C85",
+                        "#ECA37A",
+                        "#E3CECD",
+                        "#F4B3C2",
+                        "#F6DDDB",
+                        "#E9A59A",
+                        "#A72126",
+                    ],
+                    [
+                        "#F3F2F7",
+                        "#F1F9FE",
+                        "#FFF1D5",
+                        "#F6F1DA",
+                        "#FFF5D7",
+                        "#EAE5DA",
+                        "#EDDBB1",
+                    ],
+                    [
+                        "#000000",
+                        "#2A2A2A",
+                        "#555555",
+                        "#808080",
+                        "#AAAAAA",
+                        "#D5D5D5",
+                        "#FFFFFF",
+                    ],
+                ];
+            },
         },
         size: {
             type: String,
         },
         disabled: { type: Boolean, default: false },
         ColorFormat: String,
+        PopperClass: String,
     },
     computed: {
         backgroundImage() {
@@ -179,9 +247,9 @@ export default {
         },
     },
     watch: {
-        myColor: {
+        value: {
             handler(newVal, oldVal) {
-                this.checkColor(newVal)
+                this.checkColor(newVal);
             },
         },
         color: {
@@ -192,7 +260,7 @@ export default {
         },
     },
     mounted() {
-        this.checkColor(newVal)
+        this.checkColor(this.value);
     },
     components: {
         CompactPicker,
@@ -209,7 +277,7 @@ export default {
             color: "#000000",
             rgbaColor: "",
             currentTag: "default",
-            value: "01",
+            value1: "01",
             options: [
                 {
                     label: "世界地图配色",
@@ -241,6 +309,23 @@ export default {
         };
     },
     methods: {
+        /**
+         * @description: 当点击空白处时 需要复原颜色数据
+         * @return {*}
+         */        
+        hide(){
+            if(this.value != this.rgbaColor){
+                this.checkColor(this.value);
+            }
+        },
+
+        /**
+         * @description: 用于生成透明底色色块背景
+         * @param {*} color1
+         * @param {*} color2
+         * @param {*} size
+         * @return {*}
+         */        
         generateCheckerboard(color1, color2, size) {
             // 避免在非浏览器环境执行
             if (typeof document === "undefined") return "";
@@ -582,11 +667,12 @@ export default {
     color: #ffffff;
 }
 .picker-box {
-    display: inline-block;
+    display: inline-flex;
     position: relative;
     line-height: normal;
-    width: 18px;
-    height: 18px;
+    width: 24px;
+    height: 24px;
+    align-items: center;
     .color-picker__mask {
         width: 26px;
         height: 26px;
@@ -696,8 +782,8 @@ export default {
     background-size: contain;
 }
 .color-picker {
-    width: 100%;
-    height: 368px;
+    // width: 100%;
+    // height: 368px;
     box-sizing: border-box;
     border-radius: 4px;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
