@@ -13,6 +13,9 @@ import router from './router'
 
 import i18n from './lang'
 
+// 当页面进行缩放时，下拉框等位置会出现偏差，需要将缩放倍数考虑进去进行计算弹框的位置
+import './util/element-ui-bug-fixed.js'
+
 // 兼容 Element
 Vue.use(ElementUI, {
     i18n: (key, value) => i18n.t(key, value)
