@@ -4,11 +4,7 @@
         width="338"
         trigger="click"
         :disabled="disabled"
-        style="
-            padding: 0;
-            background: #ffffff;
-            border-radius: 2px;
-        "
+        style="padding: 0; background: #ffffff; border-radius: 2px"
         :popper-class="PopperClass"
         v-model="colorPickerVisible"
         @hide="hide"
@@ -33,6 +29,7 @@
                     placeholder="请选择配色方案"
                     v-show="currentTag == 'default'"
                     style="margin-bottom: 6px"
+                    :popper-append-to-body="false"
                 >
                     <el-option
                         v-for="item in options"
@@ -312,9 +309,9 @@ export default {
         /**
          * @description: 当点击空白处时 需要复原颜色数据
          * @return {*}
-         */        
-        hide(){
-            if(this.value != this.rgbaColor){
+         */
+        hide() {
+            if (this.value != this.rgbaColor) {
                 this.checkColor(this.value);
             }
         },
@@ -325,7 +322,7 @@ export default {
          * @param {*} color2
          * @param {*} size
          * @return {*}
-         */        
+         */
         generateCheckerboard(color1, color2, size) {
             // 避免在非浏览器环境执行
             if (typeof document === "undefined") return "";
@@ -610,7 +607,10 @@ export default {
                     return;
                 }
             }
-
+            if (this.color == "#000000") {
+                // 如果 color 并没有改变 ，那么rgba展示的也不会改变 但是格式不正确了 需要手动改变展示结果
+                this.rgbaColor = this.hexToRgba(this.color);
+            }
             // 如果都不匹配，使用默认颜色
             this.color = "#000000";
         },
