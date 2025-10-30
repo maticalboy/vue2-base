@@ -4,16 +4,17 @@
         width="338"
         trigger="click"
         :disabled="disabled"
-        style="padding: 0; background: #ffffff; border-radius: 2px"
-        :popper-class="PopperClass"
+        :popper-class="`color-picker-popver ${PopperClass || ''}`"
+        style="line-height: 18px; height: 18px;"
         v-model="colorPickerVisible"
+        :visible-arrow="false"
         @hide="hide"
     >
-        <div class="color-picker">
+        <div class="base-color-picker">
             <el-tabs
                 v-model="currentTag"
                 type="card"
-                class="color-picker-header"
+                class="base-color-picker-header"
             >
                 <el-tab-pane
                     :label="item.label"
@@ -23,7 +24,7 @@
                     class="tab-pane-item"
                 ></el-tab-pane>
             </el-tabs>
-            <div class="color-picker-container">
+            <div class="base-color-picker-container">
                 <el-select
                     v-model="value1"
                     placeholder="请选择配色方案"
@@ -86,7 +87,7 @@
                 >
                 </HSLSliders>
             </div>
-            <div class="color-picker-footer">
+            <div class="base-color-picker-footer">
                 <div class="color-wrap1">
                     <div
                         class="active-color"
@@ -102,6 +103,7 @@
                 <el-input
                     v-model="rgbaColor"
                     style="width: 160px; margin-right: 56px; line-height: 1"
+                    @blur="onBlur"
                     @change="checkColor"
                 ></el-input>
                 <el-button type="text" size="small" @click="clear"
@@ -116,7 +118,57 @@
                 >
             </div>
         </div>
+
         <div
+            slot="reference"
+            :class="[
+                'el-color-picker',
+                disabled ? 'is-disabled' : '',
+                size ? `el-color-picker--${size}` : '',
+            ]"
+        >
+            <div class="el-color-picker__mask" v-if="disabled"></div>
+            <div class="el-color-picker__trigger">
+                <span
+                    class="el-color-picker__color"
+                    :class="{ 'is-alpha': true }"
+                >
+                    <span
+                        class="el-color-picker__color-inner"
+                        :style="{
+                            backgroundColor: color,
+                        }"
+                    ></span>
+                    <span
+                        class="el-color-picker__empty el-icon-close"
+                        v-if="!color"
+                    ></span>
+                </span>
+                <span
+                    class="el-color-picker__icon el-icon-arrow-down"
+                    v-show="color"
+                ></span>
+
+                <!-- <div style="width: 100%; height: 100%; position: relative">
+                    <div class="color" :style="{ background: color }"></div>
+                    <div
+                        class="vc-checkerboard"
+                        :style="{
+                            width: '100%;',
+                            height: '100%;',
+                            'background-size': 'auto;',
+                            'background-image': backgroundImage,
+                        }"
+                    ></div>
+                </div>
+                <span
+                    class="el-color-picker__icon el-icon-arrow-down"
+                    v-show="color"
+                ></span> -->
+            </div>
+        </div>
+
+        <!-- <div
             class="picker-box"
             slot="reference"
             :class="{
@@ -128,10 +180,21 @@
         >
             <div class="color-picker__mask" v-if="disabled"></div>
             <div class="color-picker__trigger">
-                <div class="color" :style="{ background: color }"></div>
-                <div class="el-icon-arrow-down color-picker-icon"></div>
+                <div style="width: 100%; height: 100%; position: relative">
+                    <div class="color" :style="{ background: color }"></div>
+                    <div
+                        class="vc-checkerboard"
+                        :style="{
+                            width: '100%;',
+                            height: '100%;',
+                            'background-size': 'auto;',
+                            'background-image': backgroundImage,
+                        }"
+                    ></div>
+                </div>
+                <span class="el-color-picker__icon el-icon-arrow-down" v-show="color"></span>
             </div>
-        </div>
+        </div> -->
     </el-popover>
 </template>
 <script>
@@ -251,6 +314,10 @@ export default {
         },
         color: {
             handler(newVal, oldVal) {
+                if (!newVal) {
+                    this.rgbaColor = null;
+                    return;
+                }
                 this.rgbaColor = this.hexToRgba(newVal);
             },
             immediate: true,
@@ -307,6 +374,17 @@ export default {
     },
     methods: {
         /**
+         * @description: 失焦事件
+         * @return {*}
+         */
+        onBlur() {
+            if (!this.rgbaColor) {
+                this.color = "#000";
+                this.checkColor(this.color);
+            }
+        },
+
+        /**
          * @description: 当点击空白处时 需要复原颜色数据
          * @return {*}
          */
@@ -348,6 +426,7 @@ export default {
             // 转换为图片URL
             return canvas.toDataURL();
         },
+
         /**
          * @description: 十六进制转RGBA
          * @param {*} hex
@@ -487,6 +566,10 @@ export default {
          */
         checkColor(value) {
             let str = value;
+            if (!str) {
+                this.color = "";
+                return;
+            }
             // 正则表达式匹配十六进制格式
             const hexRegex =
                 /^#?([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/;
@@ -620,7 +703,7 @@ export default {
          * @return {*}
          */
         clear() {
-            this.colorChange("#000000");
+            this.colorChange("");
         },
 
         /**
@@ -629,6 +712,12 @@ export default {
          * @return {*}
          */
         colorChange(color) {
+            if (!color) {
+                this.color = "";
+                this.$emit("change", null);
+                this.colorPickerVisible = false;
+                return;
+            }
             this.color = color;
             let formatColor = "";
             switch (this.ColorFormat) {
@@ -706,8 +795,10 @@ export default {
         width: 100%;
         height: 100%;
         text-align: center;
+        overflow: hidden;
+        z-index: 1;
     }
-    .color-picker-icon {
+    .base-color-picker-icon {
         font-size: 12px;
         display: inline-block;
         width: 100%;
@@ -722,33 +813,6 @@ export default {
 .picker-box.is-disabled .color-picker__trigger {
     cursor: not-allowed;
 }
-// .picker-box-medium {
-//     height: 36px;
-//     .color-picker__trigger {
-//         height: 36px;
-//         width: 36px;
-//     }
-// }
-// .picker-box-small {
-//     height: 32px;
-//     .color-picker__trigger {
-//         height: 32px;
-//         width: 32px;
-//     }
-//     .color-picker-icon {
-//         transform: translate3d(-50%, -50%, 0) scale(0.8);
-//     }
-// }
-// .picker-box-mini {
-//     height: 28px;
-//     .color-picker__trigger {
-//         height: 28px;
-//         width: 28px;
-//     }
-//     .color-picker-icon {
-//         transform: translate3d(-50%, -50%, 0) scale(0.8);
-//     }
-// }
 .color-circle {
     width: 200px;
     height: 200px;
@@ -781,13 +845,13 @@ export default {
     left: 0;
     background-size: contain;
 }
-.color-picker {
+.base-color-picker {
     // width: 100%;
     // height: 368px;
     box-sizing: border-box;
     border-radius: 4px;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-    .color-picker-header {
+    .base-color-picker-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -795,13 +859,13 @@ export default {
         padding: 8px;
         box-sizing: border-box;
     }
-    .color-picker-container {
+    .base-color-picker-container {
         width: 100%;
         height: 290px;
         padding: 0 8px 8px;
         box-sizing: border-box;
     }
-    .color-picker-footer {
+    .base-color-picker-footer {
         display: flex;
         align-items: center;
         width: 100%;
