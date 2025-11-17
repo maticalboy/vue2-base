@@ -20,6 +20,29 @@ import './util/element-ui-bug-fixed.js'
 import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 
+// 生产环境注册 Service Worker 网络资源缓存减少带宽流量
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+                console.log('Service Worker 注册成功：', registration.scope);
+                // 监听 SW 更新（可选）
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'waiting') {
+                            console.log('有新的 Service Worker 待激活');
+                            // 可提示用户刷新页面
+                        }
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Service Worker 注册失败：', error);
+            });
+    });
+}
+
 Vue.use(mavonEditor)
 // 兼容 Element
 Vue.use(ElementUI, {
