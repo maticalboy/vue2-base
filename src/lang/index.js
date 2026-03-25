@@ -2,14 +2,29 @@ import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import enUS from './locales/en-US.js'
 import zhCN from './locales/zh-CN.js'
+import deDE from './locales_new/de-DE.js'
+import frFR from './locales_new/fr-FR.js'
+import esES from './locales_new/es-ES.js'
+import itIT from './locales_new/it-IT.js'
+import ptPT from './locales_new/pt-PT.js'
 
 import ElementLocale from 'element-ui/lib/locale'
 import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
 import enLocale from 'element-ui/lib/locale/lang/en'
+import deLocale from 'element-ui/lib/locale/lang/de'
+import frLocale from 'element-ui/lib/locale/lang/fr'
+import esLocale from 'element-ui/lib/locale/lang/es'
+import itLocale from 'element-ui/lib/locale/lang/it'
+import ptLocale from 'element-ui/lib/locale/lang/pt'
 
 const messages = {
     'en-US': { ...enUS, ...enLocale },
-    'zh-CN': { ...zhCN, ...zhLocale }
+    'zh-CN': { ...zhCN, ...zhLocale },
+    'de-DE': { ...deDE, ...deLocale },
+    'fr-FR': { ...frFR, ...frLocale },
+    'es-ES': { ...esES, ...esLocale },
+    'it-IT': { ...itIT, ...itLocale },
+    'pt-PT': { ...ptPT, ...ptLocale }
 }
 
 Vue.use(VueI18n)
@@ -37,6 +52,36 @@ const i18n = new VueI18n({
                 style: 'currency',
                 currency: 'CNY'
             }
+        },
+        'de-DE': {
+            currency: {
+                style: 'currency',
+                currency: 'EUR'
+            }
+        },
+        'fr-FR': {
+            currency: {
+                style: 'currency',
+                currency: 'EUR'
+            }
+        },
+        'es-ES': {
+            currency: {
+                style: 'currency',
+                currency: 'EUR'
+            }
+        },
+        'it-IT': {
+            currency: {
+                style: 'currency',
+                currency: 'EUR'
+            }
+        },
+        'pt-PT': {
+            currency: {
+                style: 'currency',
+                currency: 'EUR'
+            }
         }
     },
     dateTimeFormats: {
@@ -56,6 +101,81 @@ const i18n = new VueI18n({
             }
         },
         'zh-CN': {
+            short: {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            },
+            long: {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long',
+                hour: 'numeric',
+                minute: 'numeric'
+            }
+        },
+        'de-DE': {
+            short: {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            },
+            long: {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long',
+                hour: 'numeric',
+                minute: 'numeric'
+            }
+        },
+        'fr-FR': {
+            short: {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            },
+            long: {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long',
+                hour: 'numeric',
+                minute: 'numeric'
+            }
+        },
+        'es-ES': {
+            short: {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            },
+            long: {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long',
+                hour: 'numeric',
+                minute: 'numeric'
+            }
+        },
+        'it-IT': {
+            short: {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            },
+            long: {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long',
+                hour: 'numeric',
+                minute: 'numeric'
+            }
+        },
+        'pt-PT': {
             short: {
                 year: 'numeric',
                 month: 'short',
