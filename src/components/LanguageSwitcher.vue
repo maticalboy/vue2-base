@@ -18,21 +18,29 @@ export default {
     name: "LanguageSwitcher",
     data() {
         return {
-            availableLanguages: [
-                { code: "en-US", name: this.$t("language.English") },
-                { code: "zh-CN", name: "简体中文" },
-                { code: "ja-JP", name: "日本語" },
-            ],
+            availableLanguages: [],
             currentLang: this.$i18n.locale,
         };
     },
+
+    created() {
+        this.availableLanguages = [
+            { code: "zh-CN", name: '简体中文' },
+            { code: "en-US", name: "English" },
+            { code: "de-DE", name: "Deutsch" },
+            { code: "fr-FR", name: "Français" },
+            { code: "es-ES", name: "Espanol" },
+            { code: "it-IT", name: "Italiano" },
+            { code: "pt-PT", name: "Português" },
+        ];
+    },
     methods: {
         changeLanguage() {
-            this.$i18n.locale = this.currentLang;
+            // this.$i18n.locale = this.currentLang;
             localStorage.setItem("lang", this.currentLang);
 
             // 根据需要可以触发页面刷新或重新获取数据
-            // window.location.reload()
+            window.location.reload()
         },
     },
 };

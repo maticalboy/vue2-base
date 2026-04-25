@@ -30,7 +30,7 @@
 </template>
 <script>
 import LanguageSwitcher from "@/components/LanguageSwitcher";
-import ColorPicker from "@/components/ColorPicker.vue";
+import ColorPicker from "@/components/colorPicker";
 export default {
     components: {
         LanguageSwitcher,

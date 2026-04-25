@@ -9,14 +9,15 @@
             <predefine v-if="predefine" :color="color" :colors="predefine"></predefine> -->
             <div>
                 <el-tabs v-model="currentTag" type="card" class="base-color-picker-header">
-                    <el-tab-pane :label="item.label" :name="item.id" v-for="item in colorPickerTags" :key="item.id"
-                        class="tab-pane-item"></el-tab-pane>
+                    <el-tab-pane :label="item.i18nKey ? t(item.i18nKey) : item.label" :name="item.id"
+                        v-for="item in colorPickerTags" :key="item.id" class="tab-pane-item"></el-tab-pane>
                 </el-tabs>
                 <div class="base-color-picker-container">
-                    <el-select v-model="colorScheme" placeholder="请选择配色方案" v-show="currentTag == 'default'"
-                        style="margin-bottom: 6px" :popper-append-to-body="false">
-                        <el-option v-for="item in colorSchemeOptions" :key="item.value" :label="item.label"
-                            :value="item.value" @change="handelChangeColorScheme">
+                    <el-select v-model="colorScheme" :placeholder="t('picker_dropdown.colorScheme')"
+                        v-show="currentTag == 'default'" style="margin-bottom: 6px" :popper-append-to-body="false">
+                        <el-option v-for="item in colorSchemeOptions" :key="item.value"
+                            :label="item.i18nKey ? t(item.i18nKey) : item.label" :value="item.value"
+                            @change="handelChangeColorScheme">
                         </el-option>
                     </el-select>
                     <swatches-picker v-model="templateColor" :palette="colorSchemePredefine"
@@ -73,7 +74,7 @@
                 <el-button size="small" type="text" @click="$emit('clear')">
                     {{ t('el.colorpicker.clear') }}
                 </el-button>
-                <el-button type="primary" size="mini" @click="confirmValue">
+                <el-button type="primary" size="small" @click="confirmValue">
                     {{ t('el.colorpicker.confirm') }}
                 </el-button>
             </div>
@@ -123,7 +124,7 @@ export default {
             colorScheme: "01",
             colorSchemeOptions: [
                 {
-                    label: "世界地图配色",
+                    i18nKey: 'picker_dropdown.worldPalette',
                     value: "01",
                     predefine: [
                         [
@@ -201,7 +202,7 @@ export default {
                     ]
                 },
                 {
-                    label: "纯色过渡配色",
+                    i18nKey: 'picker_dropdown.solidGradientPalette',
                     value: "02",
                     predefine: [
                         [
@@ -300,7 +301,7 @@ export default {
                             "#dde1e6",
                             "#f2f4f8",
                         ],
-                          [
+                        [
                             "#161616",
                             "#262626",
                             "#393939",
@@ -312,7 +313,7 @@ export default {
                             "#e0e0e0",
                             "#f4f4f4",
                         ],
-                          [
+                        [
                             "#171414",
                             "#272525",
                             "#3c3838",
@@ -329,11 +330,11 @@ export default {
             ],
             colorPickerTags: [
                 {
-                    label: "推荐",
+                    i18nKey: 'picker_dropdown.recommend',
                     id: "default",
                 },
                 {
-                    label: "调色板",
+                    i18nKey: 'picker_dropdown.colorPalette',
                     id: "palette",
                 },
                 {
@@ -779,6 +780,27 @@ export default {
     padding: 8px;
     border-top: 1px solid #d4d4d4;
     box-sizing: border-box;
+
+    .el-button--primary {
+        width: fit-content;
+        min-width: 60px;
+        height: 24px;
+        line-height: 24px;
+        &:extend(.text-default);
+        padding: 0 10px;
+        border-radius: 2px;
+        box-sizing: border-box;
+
+        span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        img {
+            margin-right: 4px;
+        }
+    }
 }
 
 .color-wrap1 {

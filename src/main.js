@@ -10,6 +10,7 @@ import 'vue-color/vue2/style.css';
 import App from './App.vue';
 
 import router from './router'
+import store from './store'
 
 import i18n from './lang'
 
